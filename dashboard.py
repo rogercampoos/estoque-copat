@@ -33,12 +33,10 @@ def fmt_cnpj(cnpj):
 # --- Conexão BigQuery ---
 @st.cache_resource
 def get_client():
-    # Nuvem: credenciais via st.secrets
-    if "gcp_service_account" in st.secrets:
+    try:
         info = dict(st.secrets["gcp_service_account"])
         creds = service_account.Credentials.from_service_account_info(info, scopes=SCOPES)
-    else:
-        # Local: lê o arquivo JSON da máquina
+    except Exception:
         sa_path = _glob.glob(r"C:/Users/p0134255/Documents/*/Backup/Tj/Downloads/service_account.json")[0]
         creds = service_account.Credentials.from_service_account_file(sa_path, scopes=SCOPES)
     return bigquery.Client(project=PROJECT, credentials=creds)
