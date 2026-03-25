@@ -1,0 +1,22 @@
+# Ambiente virtual
+Scripts/
+Include/
+Lib/
+etc/
+share/
+pyvenv.cfg
+
+# ChromaDB local
+chroma_db/
+
+# Credenciais
+*.json
+!requirements.txt
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Streamlit local
+.streamlit/secrets.toml
