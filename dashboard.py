@@ -32,6 +32,8 @@ st.markdown("""
   footer { visibility: hidden; }
   [data-testid="stHeader"] { visibility: hidden; }
   [data-testid="manage-app-button"] { display: none; }
+  [data-testid="appCreatorAvatar"] { display: none; }
+  [data-testid="stBottom"] svg { display: none; }
   [data-testid="stExpandSidebarButton"] { visibility: visible !important; }
   .block-container { padding: 2rem 2.5rem 2rem 3.5rem !important; }
 
