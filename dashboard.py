@@ -300,12 +300,15 @@ with st.sidebar:
         datas = pd.to_datetime(df_notas["Data_Contabilizacao"].dropna(), dayfirst=True)
         if not datas.empty:
             dmin, dmax = datas.min().date(), datas.max().date()
-            periodo = st.date_input("Período", value=(dmin, dmax), min_value=dmin, max_value=date.today())
-            if len(periodo) == 2:
-                df_notas = df_notas[
-                    (pd.to_datetime(df_notas["Data_Contabilizacao"], dayfirst=True) >= pd.Timestamp(periodo[0])) &
-                    (pd.to_datetime(df_notas["Data_Contabilizacao"], dayfirst=True) <= pd.Timestamp(periodo[1]))
-                ]
+            col_de, col_ate = st.columns(2)
+            with col_de:
+                data_de = st.date_input("De", value=dmin, min_value=dmin, max_value=date.today())
+            with col_ate:
+                data_ate = st.date_input("Até", value=dmax, min_value=dmin, max_value=date.today())
+            df_notas = df_notas[
+                (pd.to_datetime(df_notas["Data_Contabilizacao"], dayfirst=True) >= pd.Timestamp(data_de)) &
+                (pd.to_datetime(df_notas["Data_Contabilizacao"], dayfirst=True) <= pd.Timestamp(data_ate))
+            ]
 
     if "Unidade_Administrativa" in df_notas.columns:
         unidades = ["Todas"] + sorted(df_notas["Unidade_Administrativa"].dropna().unique().tolist())
