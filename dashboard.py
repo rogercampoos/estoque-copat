@@ -28,11 +28,9 @@ st.markdown("""
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
   html, body, [class*="css"] { font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; }
 
-  #MainMenu, footer,
-  [data-testid="stHeader"],
-  [data-testid="stToolbar"],
-  [data-testid="stDecoration"],
-  [data-testid="stStatusWidget"] { display: none !important; }
+  #MainMenu { visibility: hidden; }
+  footer { visibility: hidden; }
+  [data-testid="stHeader"] { visibility: hidden; }
   [data-testid="stExpandSidebarButton"] { visibility: visible !important; }
   .block-container { padding: 2rem 2.5rem 2rem 3.5rem !important; }
 
@@ -276,7 +274,7 @@ if "Valor_Nota" in df_notas.columns:
     )
 if "Data_Contabilizacao" in df_notas.columns:
     df_notas["Data_Contabilizacao"] = pd.to_datetime(
-        df_notas["Data_Contabilizacao"], dayfirst=True, errors="coerce"
+        df_notas["Data_Contabilizacao"], errors="coerce"
     ).dt.date
 if "Quantidade" in df_itens.columns:
     df_itens["Quantidade"] = pd.to_numeric(df_itens["Quantidade"], errors="coerce").astype("Int64")
@@ -296,14 +294,14 @@ with st.sidebar:
     st.markdown("### Filtros")
 
     if "Data_Contabilizacao" in df_notas.columns:
-        datas = pd.to_datetime(df_notas["Data_Contabilizacao"].dropna(), dayfirst=True)
+        datas = pd.to_datetime(df_notas["Data_Contabilizacao"].dropna())
         if not datas.empty:
             dmin, dmax = datas.min().date(), datas.max().date()
             periodo = st.date_input("Período", value=(dmin, dmax), min_value=dmin, max_value=dmax)
             if len(periodo) == 2:
                 df_notas = df_notas[
-                    (pd.to_datetime(df_notas["Data_Contabilizacao"], dayfirst=True) >= pd.Timestamp(periodo[0])) &
-                    (pd.to_datetime(df_notas["Data_Contabilizacao"], dayfirst=True) <= pd.Timestamp(periodo[1]))
+                    (pd.to_datetime(df_notas["Data_Contabilizacao"]) >= pd.Timestamp(periodo[0])) &
+                    (pd.to_datetime(df_notas["Data_Contabilizacao"]) <= pd.Timestamp(periodo[1]))
                 ]
 
     if "Unidade_Administrativa" in df_notas.columns:
@@ -367,7 +365,7 @@ col1, col2 = st.columns(2, gap="medium")
 with col1:
     if "Data_Contabilizacao" in df_notas.columns:
         df_temp = df_notas.dropna(subset=["Data_Contabilizacao"]).copy()
-        df_temp["Mês"] = pd.to_datetime(df_temp["Data_Contabilizacao"], dayfirst=True).dt.to_period("M").astype(str)
+        df_temp["Mês"] = pd.to_datetime(df_temp["Data_Contabilizacao"]).dt.to_period("M").astype(str)
         by_mes = df_temp.groupby("Mês").agg(NFs=("NF", "nunique")).reset_index()
         st.markdown('<p class="chart-label">Entradas por Mês — Nº de NFs</p>', unsafe_allow_html=True)
         st.bar_chart(by_mes.set_index("Mês")["NFs"], height=260, width='stretch')
