@@ -299,21 +299,26 @@ with st.sidebar:
     if "Data_Contabilizacao" in df_notas.columns:
         datas = pd.to_datetime(df_notas["Data_Contabilizacao"].dropna(), dayfirst=True)
         if not datas.empty:
-            _M = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"]
-            periodos = sorted(datas.dt.to_period("M").unique())
-            labels = [f"{_M[p.month-1]}/{p.year}" for p in periodos]
+            _MESES = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"]
+            anos = sorted(datas.dt.year.unique().tolist())
+            dmin, dmax = datas.min(), datas.max()
             st.markdown("**Período**")
             col_de, col_ate = st.columns(2)
             with col_de:
                 st.caption("De")
-                idx_de = st.selectbox("De", range(len(labels)), format_func=lambda i: labels[i],
-                                      index=0, label_visibility="collapsed")
+                ano_de = st.selectbox("Ano De", anos, index=0, label_visibility="collapsed")
+                mes_de = st.selectbox("Mês De", range(1, 13),
+                                      format_func=lambda m: _MESES[m-1],
+                                      index=dmin.month - 1, label_visibility="collapsed")
             with col_ate:
                 st.caption("Até")
-                idx_ate = st.selectbox("Até", range(len(labels)), format_func=lambda i: labels[i],
-                                       index=len(labels)-1, label_visibility="collapsed")
-            p_de = periodos[idx_de].start_time
-            p_ate = periodos[idx_ate].end_time
+                ano_ate = st.selectbox("Ano Até", anos, index=len(anos)-1, label_visibility="collapsed")
+                mes_ate = st.selectbox("Mês Até", range(1, 13),
+                                       format_func=lambda m: _MESES[m-1],
+                                       index=dmax.month - 1, label_visibility="collapsed")
+            import calendar as _cal
+            p_de = pd.Timestamp(ano_de, mes_de, 1)
+            p_ate = pd.Timestamp(ano_ate, mes_ate, _cal.monthrange(ano_ate, mes_ate)[1], 23, 59, 59)
             df_notas = df_notas[
                 (pd.to_datetime(df_notas["Data_Contabilizacao"], dayfirst=True) >= p_de) &
                 (pd.to_datetime(df_notas["Data_Contabilizacao"], dayfirst=True) <= p_ate)
