@@ -296,9 +296,22 @@ if modo_demo:
 with st.sidebar:
     st.markdown("### Filtros")
 
+    if "Unidade_Administrativa" in df_notas.columns:
+        unidades = ["Todas"] + sorted(df_notas["Unidade_Administrativa"].dropna().unique().tolist())
+        unidade_sel = st.selectbox("Unidade Administrativa", unidades)
+        if unidade_sel != "Todas":
+            df_notas = df_notas[df_notas["Unidade_Administrativa"] == unidade_sel]
+
+    if "Fornecedor" in df_notas.columns:
+        fornecedores = ["Todos"] + sorted(df_notas["Fornecedor"].dropna().unique().tolist())
+        forn_sel = st.selectbox("Fornecedor", fornecedores)
+        if forn_sel != "Todos":
+            df_notas = df_notas[df_notas["Fornecedor"] == forn_sel]
+
     if "Data_Contabilizacao" in df_notas.columns:
         datas = pd.to_datetime(df_notas["Data_Contabilizacao"].dropna(), dayfirst=True)
         if not datas.empty:
+            import calendar as _cal
             _MESES = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"]
             anos = sorted(datas.dt.year.unique().tolist())
             dmin, dmax = datas.min(), datas.max()
@@ -316,25 +329,12 @@ with st.sidebar:
                 mes_ate = st.selectbox("Mês Até", range(1, 13),
                                        format_func=lambda m: _MESES[m-1],
                                        index=dmax.month - 1, label_visibility="collapsed")
-            import calendar as _cal
             p_de = pd.Timestamp(ano_de, mes_de, 1)
             p_ate = pd.Timestamp(ano_ate, mes_ate, _cal.monthrange(ano_ate, mes_ate)[1], 23, 59, 59)
             df_notas = df_notas[
                 (pd.to_datetime(df_notas["Data_Contabilizacao"], dayfirst=True) >= p_de) &
                 (pd.to_datetime(df_notas["Data_Contabilizacao"], dayfirst=True) <= p_ate)
             ]
-
-    if "Unidade_Administrativa" in df_notas.columns:
-        unidades = ["Todas"] + sorted(df_notas["Unidade_Administrativa"].dropna().unique().tolist())
-        unidade_sel = st.selectbox("Unidade Administrativa", unidades)
-        if unidade_sel != "Todas":
-            df_notas = df_notas[df_notas["Unidade_Administrativa"] == unidade_sel]
-
-    if "Fornecedor" in df_notas.columns:
-        fornecedores = ["Todos"] + sorted(df_notas["Fornecedor"].dropna().unique().tolist())
-        forn_sel = st.selectbox("Fornecedor", fornecedores)
-        if forn_sel != "Todos":
-            df_notas = df_notas[df_notas["Fornecedor"] == forn_sel]
 
     st.divider()
     st.markdown(
