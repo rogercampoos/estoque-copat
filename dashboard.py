@@ -33,7 +33,8 @@ st.markdown("""
   [data-testid="stHeader"] { visibility: hidden; }
   [data-testid="manage-app-button"] { display: none !important; }
   [data-testid="appCreatorAvatar"] { display: none !important; }
-  div:has([data-testid="appCreatorAvatar"]) { display: none !important; }
+  a:has(> img[data-testid="appCreatorAvatar"]) { display: none !important; }
+  div:has(> a > img[data-testid="appCreatorAvatar"]) { display: none !important; }
   [data-testid="stExpandSidebarButton"] { visibility: visible !important; }
   .block-container { padding: 2rem 2.5rem 2rem 3.5rem !important; }
 
