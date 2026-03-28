@@ -33,8 +33,9 @@ st.markdown("""
   [data-testid="stHeader"] { visibility: hidden; }
   [data-testid="stExpandSidebarButton"] { visibility: visible !important; }
 
-  /* Selectboxes: apenas seleção, sem digitação */
-  [data-baseweb="select"] input { pointer-events: none; caret-color: transparent; }
+  /* Selectboxes e date inputs: apenas seleção, sem digitação */
+  [data-baseweb="select"] input,
+  [data-testid="stDateInput"] [data-baseweb="input"] input { pointer-events: none; caret-color: transparent; }
   .block-container { padding: 2rem 2.5rem 2rem 3.5rem !important; }
 
   /* Header institucional */
