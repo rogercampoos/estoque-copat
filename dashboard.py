@@ -299,6 +299,17 @@ if modo_demo:
 with st.sidebar:
     st.markdown("### Filtros")
 
+    if "Data_Contabilizacao" in df_notas.columns:
+        datas = pd.to_datetime(df_notas["Data_Contabilizacao"].dropna(), dayfirst=True)
+        if not datas.empty:
+            dmin, dmax = datas.min().date(), datas.max().date()
+            periodo = st.date_input("Período", value=(dmin, dmax))
+            if len(periodo) == 2:
+                df_notas = df_notas[
+                    (pd.to_datetime(df_notas["Data_Contabilizacao"], dayfirst=True) >= pd.Timestamp(periodo[0])) &
+                    (pd.to_datetime(df_notas["Data_Contabilizacao"], dayfirst=True) <= pd.Timestamp(periodo[1]))
+                ]
+
     if "Unidade_Administrativa" in df_notas.columns:
         unidades = ["Todas"] + sorted(df_notas["Unidade_Administrativa"].dropna().unique().tolist())
         unidade_sel = st.selectbox("Unidade Administrativa", unidades)
@@ -310,17 +321,6 @@ with st.sidebar:
         forn_sel = st.selectbox("Fornecedor", fornecedores)
         if forn_sel != "Todos":
             df_notas = df_notas[df_notas["Fornecedor"] == forn_sel]
-
-    if "Data_Contabilizacao" in df_notas.columns:
-        datas = pd.to_datetime(df_notas["Data_Contabilizacao"].dropna(), dayfirst=True)
-        if not datas.empty:
-            dmin, dmax = datas.min().date(), datas.max().date()
-            periodo = st.date_input("Período", value=(dmin, dmax))
-            if len(periodo) == 2:
-                df_notas = df_notas[
-                    (pd.to_datetime(df_notas["Data_Contabilizacao"], dayfirst=True) >= pd.Timestamp(periodo[0])) &
-                    (pd.to_datetime(df_notas["Data_Contabilizacao"], dayfirst=True) <= pd.Timestamp(periodo[1]))
-                ]
 
     st.divider()
     st.markdown(
