@@ -1,5 +1,6 @@
 import os
 import streamlit as st
+import streamlit.components.v1 as components
 import pandas as pd
 from google.oauth2 import service_account
 import glob as _glob
@@ -21,6 +22,45 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# --- Ocultar viewer badge do Streamlit Cloud (avatar + logo SVG) via JS ---
+# O badge é renderizado no shell pai, fora do escopo do st.markdown CSS.
+# O JS acessa window.parent.document para cruzar a barreira do iframe.
+components.html("""
+<script>
+(function() {
+  function hide(doc) {
+    try {
+      doc.querySelectorAll('img[data-testid="appCreatorAvatar"]').forEach(function(img) {
+        var a = img.closest('a');
+        if (a) a.style.setProperty('display', 'none', 'important');
+        var parent = a ? a.parentElement : img.parentElement;
+        if (parent) parent.style.setProperty('display', 'none', 'important');
+      });
+      doc.querySelectorAll('[data-testid="manage-app-button"]').forEach(function(el) {
+        el.style.setProperty('display', 'none', 'important');
+      });
+    } catch(e) {}
+  }
+
+  function run() {
+    hide(document);
+    try { hide(window.parent.document); } catch(e) {}
+  }
+
+  run();
+  setTimeout(run, 500);
+  setTimeout(run, 2000);
+
+  var obs = new MutationObserver(run);
+  obs.observe(document.documentElement, {childList: true, subtree: true});
+  try {
+    var obs2 = new MutationObserver(run);
+    obs2.observe(window.parent.document.documentElement, {childList: true, subtree: true});
+  } catch(e) {}
+})();
+</script>
+""", height=0)
 
 # --- Design System: Precision & Density / Cool Slate / Borders-only ---
 st.markdown("""
