@@ -35,6 +35,9 @@ st.markdown("""
 
   /* Selectboxes: apenas seleção, sem digitação */
   [data-baseweb="select"] input { pointer-events: none; caret-color: transparent; }
+
+  /* Calendário do date_input não fica clipado pela sidebar */
+  [data-testid="stSidebar"] > div:first-child { overflow: visible !important; }
   .block-container { padding: 2rem 2.5rem 2rem 3.5rem !important; }
 
   /* Header institucional */
