@@ -299,13 +299,25 @@ with st.sidebar:
     if "Data_Contabilizacao" in df_notas.columns:
         datas = pd.to_datetime(df_notas["Data_Contabilizacao"].dropna(), dayfirst=True)
         if not datas.empty:
-            dmin, dmax = datas.min().date(), datas.max().date()
-            periodo = st.date_input("Período", value=(dmin, dmax))
-            if len(periodo) == 2:
-                df_notas = df_notas[
-                    (pd.to_datetime(df_notas["Data_Contabilizacao"], dayfirst=True) >= pd.Timestamp(periodo[0])) &
-                    (pd.to_datetime(df_notas["Data_Contabilizacao"], dayfirst=True) <= pd.Timestamp(periodo[1]))
-                ]
+            _M = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"]
+            periodos = sorted(datas.dt.to_period("M").unique())
+            labels = [f"{_M[p.month-1]}/{p.year}" for p in periodos]
+            st.markdown("**Período**")
+            col_de, col_ate = st.columns(2)
+            with col_de:
+                st.caption("De")
+                idx_de = st.selectbox("De", range(len(labels)), format_func=lambda i: labels[i],
+                                      index=0, label_visibility="collapsed")
+            with col_ate:
+                st.caption("Até")
+                idx_ate = st.selectbox("Até", range(len(labels)), format_func=lambda i: labels[i],
+                                       index=len(labels)-1, label_visibility="collapsed")
+            p_de = periodos[idx_de].start_time
+            p_ate = periodos[idx_ate].end_time
+            df_notas = df_notas[
+                (pd.to_datetime(df_notas["Data_Contabilizacao"], dayfirst=True) >= p_de) &
+                (pd.to_datetime(df_notas["Data_Contabilizacao"], dayfirst=True) <= p_ate)
+            ]
 
     if "Unidade_Administrativa" in df_notas.columns:
         unidades = ["Todas"] + sorted(df_notas["Unidade_Administrativa"].dropna().unique().tolist())
