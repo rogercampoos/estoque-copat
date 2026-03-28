@@ -300,7 +300,7 @@ with st.sidebar:
         datas = pd.to_datetime(df_notas["Data_Contabilizacao"].dropna(), dayfirst=True)
         if not datas.empty:
             dmin, dmax = datas.min().date(), datas.max().date()
-            periodo = st.date_input("Período", value=(dmin, dmax), min_value=dmin)
+            periodo = st.date_input("Período", value=(dmin, dmax), min_value=dmin, max_value=date.today())
             if len(periodo) == 2:
                 df_notas = df_notas[
                     (pd.to_datetime(df_notas["Data_Contabilizacao"], dayfirst=True) >= pd.Timestamp(periodo[0])) &
